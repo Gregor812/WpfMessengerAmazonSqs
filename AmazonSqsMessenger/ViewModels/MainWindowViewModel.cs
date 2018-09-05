@@ -2,7 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using AmazonSqsMessenger.Commands;
 using AmazonSqsMessenger.ModelConverters;
 using AmazonSqsMessenger.Models;
@@ -14,9 +18,8 @@ namespace AmazonSqsMessenger.ViewModels
 {
     class MainWindowViewModel : BaseViewModel
     {
-        public ObservableCollection<MessageViewModel> MessagesSource { get; }
-        public IEnumerable<MessageViewModel> Messages => MessagesSource.ToList();
-        public ICommand SendCommand { get; set; }
+        public ObservableCollection<MessageViewModel> Messages { get; }
+        public ICommand SendCommand { get; }
 
         private string _author;
 
@@ -41,14 +44,13 @@ namespace AmazonSqsMessenger.ViewModels
             }
         }
 
-        public IMessageQueueProvider MessageQueueProvider { get; set; }
+        public IMessageQueueProvider MessageQueueProvider { get; }
 
-        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         public MainWindowViewModel()
         {
-            MessagesSource = new ObservableCollection<MessageViewModel>();
-            MessagesSource.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(Messages));
+            Messages = new ObservableCollection<MessageViewModel>();
 
             SendCommand = new SendButtonCommand(this);
 
@@ -58,8 +60,11 @@ namespace AmazonSqsMessenger.ViewModels
 
         private void OnMessageReceived(MessageModel message)
         {
-            var msgVm = MessageConverter.ModelToViewModel(message, MessageDirection.Incoming);
-            MessagesSource.Add(msgVm);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var msgVm = MessageConverter.ModelToViewModel(message, MessageDirection.Incoming);
+                Messages.Add(msgVm);
+            });
         }
     }
 }
