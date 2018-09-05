@@ -44,6 +44,17 @@ namespace AmazonSqsMessenger.ViewModels
             }
         }
 
+        private MessageViewModel _selectedMessage;
+        public MessageViewModel SelectedMessage
+        {
+            get => _selectedMessage;
+            set
+            {
+                _selectedMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
         public IMessageQueueProvider MessageQueueProvider { get; }
 
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
@@ -64,6 +75,7 @@ namespace AmazonSqsMessenger.ViewModels
             {
                 var msgVm = MessageConverter.ModelToViewModel(message, MessageDirection.Incoming);
                 Messages.Add(msgVm);
+                SelectedMessage = msgVm;
             });
         }
     }

@@ -31,10 +31,9 @@ namespace AmazonSqsMessenger.Commands
                 DateTimeUtc = DateTime.UtcNow
             };
 
-            _parentViewModel.Messages.Add
-            (
-                MessageConverter.ModelToViewModel(message, MessageDirection.Outcoming)
-            );
+            var msgVm = MessageConverter.ModelToViewModel(message, MessageDirection.Outcoming);
+            _parentViewModel.Messages.Add(msgVm);
+            _parentViewModel.SelectedMessage = msgVm;
         }
 
         public event EventHandler CanExecuteChanged
