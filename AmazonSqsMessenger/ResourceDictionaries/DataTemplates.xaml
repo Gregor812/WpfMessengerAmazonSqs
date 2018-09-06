@@ -3,7 +3,7 @@
                     xmlns:vm="clr-namespace:AmazonSqsMessenger.ViewModels"
                     xmlns:uc="clr-namespace:AmazonSqsMessenger.UserControls">
     
-    <DataTemplate x:Key="MessageViewTemplate"
+    <DataTemplate x:Key="MessageViewDataTemplate"
                   DataType="{x:Type vm:MessageViewModel}">
         <uc:MessageView/>
     </DataTemplate>

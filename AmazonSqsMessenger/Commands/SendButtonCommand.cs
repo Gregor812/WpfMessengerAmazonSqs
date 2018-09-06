@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using AmazonSqsMessenger.ModelConverters;
 using AmazonSqsMessenger.Models;
 using AmazonSqsMessenger.Utils;
@@ -19,6 +15,7 @@ namespace AmazonSqsMessenger.Commands
         public bool CanExecute(object parameter)
         {
             return !string.IsNullOrWhiteSpace(_parentViewModel.Author) && 
+                   !string.IsNullOrWhiteSpace(_parentViewModel.ChatId) &&
                    !string.IsNullOrWhiteSpace(_parentViewModel.TypedMessage);
         }
 
@@ -28,13 +25,17 @@ namespace AmazonSqsMessenger.Commands
             {
                 Text = _parentViewModel.TypedMessage,
                 Author = _parentViewModel.Author,
-                DateTimeUtc = DateTime.UtcNow
+                DateTimeUtc = DateTime.UtcNow,
+                ChatId = _parentViewModel.ChatId
             };
 
-            _parentViewModel.Messages.Add
-            (
-                MessageConverter.ModelToViewModel(message, MessageDirection.Outcoming)
-            );
+            var isSuccessfullySended = _parentViewModel.MessageQueueProvider.SendMessage(message, _parentViewModel.ChatId);
+            if (isSuccessfullySended)
+            {
+                var msgVm = MessageConverter.ModelToViewModel(message, MessageDirection.Outcoming);
+                _parentViewModel.Messages.Add(msgVm);
+                _parentViewModel.SelectedMessage = msgVm;
+            }
         }
 
         public event EventHandler CanExecuteChanged
