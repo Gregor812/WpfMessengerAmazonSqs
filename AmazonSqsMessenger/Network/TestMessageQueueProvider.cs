@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AmazonSqsMessenger.Models;
@@ -11,9 +9,13 @@ namespace AmazonSqsMessenger.Network
 {
     class TestMessageQueueProvider : IMessageQueueProvider
     {
-        private Random _random = new Random();
+        private readonly Random _random = new Random();
 
         public event MessageReceivedHandler NewMessageReceived;
+        public bool SendMessage(MessageModel messageToSend, string chatId)
+        {
+            return true;
+        }
 
         public TestMessageQueueProvider(CancellationToken ct)
         {
@@ -27,9 +29,9 @@ namespace AmazonSqsMessenger.Network
                 Thread.Sleep(_random.Next(500, 10000));
                 NewMessageReceived?.Invoke(new MessageModel
                 {
-                    Author = "Sid Vicious",
+                    Author = "Numbers Generator",
                     DateTimeUtc = DateTime.UtcNow,
-                    Text = "There is the test message"
+                    Text = string.Join(", ", Enumerable.Range(_random.Next(1, 1000), 5))
                 });
             }
         }

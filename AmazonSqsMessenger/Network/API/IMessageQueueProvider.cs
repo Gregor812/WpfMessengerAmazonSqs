@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AmazonSqsMessenger.Models;
+﻿using AmazonSqsMessenger.Models;
 
 namespace AmazonSqsMessenger.Network.API
 {
     delegate void MessageReceivedHandler(MessageModel message);
+
     interface IMessageQueueProvider
     {
         event MessageReceivedHandler NewMessageReceived;
+
+        bool SendMessage(MessageModel messageToSend, string chatId);
     }
 }

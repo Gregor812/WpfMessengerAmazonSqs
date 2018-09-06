@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+﻿using System.Windows.Controls;
 using AmazonSqsMessenger.ViewModels;
 
 namespace AmazonSqsMessenger
@@ -9,7 +6,7 @@ namespace AmazonSqsMessenger
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public MainWindow()
         {
@@ -24,6 +21,7 @@ namespace AmazonSqsMessenger
             if (lv?.SelectedItem != null)
             {
                 lv.ScrollIntoView(lv.SelectedItem);
+                lv.SelectedItem = null;
             }
         }
     }

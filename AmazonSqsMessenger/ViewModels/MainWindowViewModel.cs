@@ -1,12 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Threading;
 using AmazonSqsMessenger.Commands;
 using AmazonSqsMessenger.ModelConverters;
 using AmazonSqsMessenger.Models;
@@ -18,7 +13,7 @@ namespace AmazonSqsMessenger.ViewModels
 {
     class MainWindowViewModel : BaseViewModel
     {
-        public ObservableCollection<MessageViewModel> Messages { get; }
+        public ObservableCollection<MessageViewModel> Messages { get; } = new ObservableCollection<MessageViewModel>();
         public ICommand SendCommand { get; }
 
         private string _author;
@@ -29,6 +24,17 @@ namespace AmazonSqsMessenger.ViewModels
             set
             {
                 _author = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _chatId;
+        public string ChatId
+        {
+            get =>_chatId;
+            set
+            {
+                _chatId = value;
                 OnPropertyChanged();
             }
         }
@@ -61,11 +67,9 @@ namespace AmazonSqsMessenger.ViewModels
 
         public MainWindowViewModel()
         {
-            Messages = new ObservableCollection<MessageViewModel>();
-
             SendCommand = new SendButtonCommand(this);
 
-            MessageQueueProvider = new TestMessageQueueProvider(_cts.Token);
+            MessageQueueProvider = new AmazonMessageQueueProvider(this, _cts.Token);
             MessageQueueProvider.NewMessageReceived += OnMessageReceived;
         }
 
